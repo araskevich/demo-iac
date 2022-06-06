@@ -1,0 +1,17 @@
+---
+# tasks file for Kubernetes node
+
+- name: Check if Kubernetes node has been already initialized
+  stat:
+    path: /etc/kubernetes/kubelet.conf
+  register: kubernetes_join_node_command_output
+
+- name: Output after kubeadm token create --print-join-command k8s-node.yaml
+  ansible.builtin.debug:
+    var: kubernetes_join_command
+  when: not kubernetes_join_node_command_output.stat.exists
+
+- name: Join node to Kubernetes master
+  ansible.builtin.command: >
+    {{ kubernetes_join_command }}
+  when: not kubernetes_join_node_command_output.stat.exists

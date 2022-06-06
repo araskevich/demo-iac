@@ -1,0 +1,31 @@
+# docker-compose.yaml
+
+# mkdir data
+# docker-compose up -d
+# docker logs jenkins
+#
+# *************************************************************
+#
+# Jenkins initial setup is required. An admin user has been created and a password generated.
+# Please use the following password to proceed to installation:
+#
+#       d5bfd87489a14bf4b04a48de1962c082
+#
+# This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
+#
+#*************************************************************
+
+version: '3.8'
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    privileged: true
+    user: root
+    ports:
+      - 8080:8080
+      - 50000:50000
+    container_name: jenkins
+    volumes:
+      - ./data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker

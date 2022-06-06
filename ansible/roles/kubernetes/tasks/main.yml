@@ -1,0 +1,86 @@
+---
+# tasks file for kubernetes
+
+- name: Ensure Kubernetes repository exists
+  ansible.builtin.yum_repository:
+    name: kubernetes
+    description: Kubernetes
+    enabled: true
+    gpgcheck: false
+    repo_gpgcheck: false
+    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+    gpgkey:
+      - https://packages.cloud.google.com/yum/doc/yum-key.gpg
+      - https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+
+- name: Install Kubernetes
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - kubelet-{{ kubernetes_version }}
+    - kubeadm-{{ kubernetes_version }}
+    - kubectl-{{ kubernetes_version }}
+
+- name: Configure kubelet_extra_args options
+  copy:
+    content: "{{ kubernetes_kubelet_extra_args }}"
+    dest: /etc/sysconfig/kubelet
+    mode: 0644
+  when: kubernetes_kubelet_extra_args | length > 0
+  notify: Restart service kubelet and perform daemon reload
+
+- name: Make sure a kubelet service unit is running/enable/not masked (stronger version of disable)
+  ansible.builtin.systemd:
+    name: kubelet
+    state: started
+    enabled: yes
+    masked: no
+
+- name: Configure sysctl for Kubernetes (iptables see bridged traffic and forward ipv4)
+  ansible.posix.sysctl:
+    name: "{{ item }}"
+    value: '1'
+    state: present
+    sysctl_set: yes
+    reload: yes
+  loop:
+    - net.bridge.bridge-nf-call-iptables
+    - net.bridge.bridge-nf-call-ip6tables
+    - net.ipv4.ip_forward
+
+# Set up master
+- include_tasks: k8s-master.yaml
+  when: k8s_role == "master"
+
+# Set up nodes
+- name: Get the kubeadm join command from the Kubernetes master
+  command: kubeadm token create --print-join-command
+  changed_when: false
+  run_once: true
+  register: kubernetes_join_command_result
+  when: k8s_role == 'master'
+
+- name: Output after kubeadm kubernetes_join_command_result main.yaml
+  ansible.builtin.debug:
+    var: kubernetes_join_command_result.stdout
+  run_once: true
+  when: k8s_role == 'master'
+
+- name: Set the kubeadm join command globally
+  set_fact:
+    kubernetes_join_command: >
+      {{ kubernetes_join_command_result.stdout }}
+      {{ kubernetes_join_command_extra_opts }}
+  when: kubernetes_join_command_result.stdout is defined and k8s_role == 'master'
+  run_once: true
+  delegate_to: "{{ item }}"
+  delegate_facts: true
+  with_items: "{{ groups['all'] }}"
+
+- name: Output after kubeadm token create --print-join-command main.yaml
+  ansible.builtin.debug:
+    var: kubernetes_join_command
+
+- include_tasks: k8s-node.yaml
+  when: k8s_role == "node"

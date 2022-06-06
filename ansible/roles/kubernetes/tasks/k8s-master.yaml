@@ -1,0 +1,51 @@
+---
+# tasks file for Kubernetes master
+
+- name: Check if Kubernetes master has been already initialized
+  stat:
+    path: /etc/kubernetes/admin.conf
+  register: kubernetes_init_stat
+
+- name: Initialize Kubernetes master with kubeadm init
+  # ansible.builtin.command: kubeadm init
+  ansible.builtin.command: >
+    kubeadm init
+    {{ kubernetes_kubeadm_init_extra_opts }} 
+  register: kubernetes_master_init
+  when: not kubernetes_init_stat.stat.exists
+
+- name: Output after kubeadm init command
+  ansible.builtin.debug:
+    var: kubernetes_master_init.stdout
+  when: not kubernetes_init_stat.stat.exists
+
+- name: Ensure .kube directory exists
+  file:
+    path: ~/.kube
+    state: directory
+    mode: 0755
+
+- name: Symlink the kubectl admin.conf to ~/.kube/conf
+  file:
+    src: /etc/kubernetes/admin.conf
+    dest: ~/.kube/config
+    state: link
+    mode: 0644
+
+- name: Get Kubernetes version for Weave installation
+  shell: kubectl version | base64 | tr -d '\n'
+  changed_when: false
+  register: kubectl_version
+
+- name: Configure Weave networking
+  command: "{{ item }}"
+  with_items:
+    - "kubectl apply -f https://cloud.weave.works/k8s/net?k8s-version={{ kubectl_version.stdout_lines[0] }}"
+  register: weave_result
+  changed_when: "'created' in weave_result.stdout"
+
+- name: Allow pods on master node (if configured)
+  command: "kubectl taint nodes --all node-role.kubernetes.io/master-"
+  when:
+    - kubernetes_allow_pods_on_master | bool
+    - not kubernetes_init_stat.stat.exists

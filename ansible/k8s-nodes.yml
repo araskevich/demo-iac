@@ -1,0 +1,8 @@
+---
+# file: k8s-nodes.yml
+- name: k8s-nodes
+  hosts: K8S_NODES
+  gather_facts: false
+  become: true
+  roles:
+    - { role: kubernetes, tags: k8s-nodes }

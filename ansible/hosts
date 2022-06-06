@@ -1,0 +1,25 @@
+
+[K8S_MASTERS]
+k8s-master01 ansible_host=192.168.122.11
+
+[K8S_MASTERS:vars]
+k8s_role=master
+
+[K8S_NODES]
+# k8s-node01 ansible_host=192.168.122.22
+
+[K8S_NODES:vars]
+k8s_role=node
+
+[DOCKER_HOSTS:children]
+K8S_MASTERS
+K8S_NODES
+
+[K8S_CLUSTER:children]
+K8S_MASTERS
+K8S_NODES
+
+[K8S_CLUSTER:vars]
+ansible_user=devops
+ansible_ssh_private_key_file=~/.ssh/id_rsa
+

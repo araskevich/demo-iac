@@ -1,0 +1,28 @@
+# docker-compose.yml
+
+# mkdir {auth,data}
+# docker run --rm \
+#  --entrypoint htpasswd \
+#  httpd:2 -Bbn testuser testpassword > auth/htpasswd
+#
+# docker-compose up -d
+
+version: '3.8'
+services:
+  registry:
+    restart: always
+    image: registry:2
+    ports:
+      - 5000:5000
+    environment:
+      # REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
+      # REGISTRY_HTTP_TLS_KEY: /certs/domain.key
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+    volumes:
+      # - /path/data:/var/lib/registry
+      # - /path/certs:/certs
+      # - /path/auth:/auth
+       - ./data:/var/lib/registry
+       - ./auth:/auth

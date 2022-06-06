@@ -1,0 +1,5 @@
+/test-data
+/terraform/dev-test/.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup

@@ -1,0 +1,8 @@
+---
+# file: k8s-masters.yml
+- name: k8s-masters
+  hosts: K8S_MASTERS
+  gather_facts: false
+  become: true
+  roles:
+    - { role: kubernetes, tags: k8s-masters }

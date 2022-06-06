@@ -1,0 +1,35 @@
+---
+# tasks file for common
+
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
+- name: Disable firewalld block
+  block:
+    - name: Firewalld installed
+      ansible.builtin.debug:
+        msg: firewalld installed!
+
+    - name: Make sure a firewalld service unit is not running
+      ansible.builtin.systemd:
+        state: stopped
+        name: firewalld
+
+    - name: Disable service firewalld and ensure it is not masked (stronger version of disable)
+      ansible.builtin.systemd:
+        name: firewalld
+        enabled: no
+        masked: no
+
+  when: ansible_facts.services['firewalld.service'] is defined and ansible_facts.services['firewalld.service']['status'] != "not-found"
+
+- name: Remove Swap from fstab
+  mount:
+    name: swap
+    fstype: swap
+    state: absent
+
+- name: Disable SELinux
+  ansible.posix.selinux:
+    state: disabled
+  notify: Reboot host and wait it boot up

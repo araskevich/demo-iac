@@ -1,0 +1,5 @@
+---
+# file: site.yml
+- import_playbook: docker-nodes.yml
+- import_playbook: k8s-masters.yml
+- import_playbook: k8s-nodes.yml

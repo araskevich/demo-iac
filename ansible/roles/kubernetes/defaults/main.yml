@@ -1,0 +1,13 @@
+---
+# defaults file for kubernetes
+
+# kubernetes_version: 1.17.4
+kubernetes_version: 1.22.10
+kubernetes_kubelet_extra_args: KUBELET_EXTRA_ARGS=--runtime-cgroups=/systemd/system.slice --kubelet-cgroups=/systemd/system.slice
+
+# kubernetes_apiserver_advertise_address: ""
+
+kubernetes_kubeadm_init_extra_opts: ""
+kubernetes_join_command_extra_opts: ""
+
+kubernetes_allow_pods_on_master: true
