@@ -1,0 +1,67 @@
+* {
+  font-family: Verdana, Geneva, sans-serif;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.common-button {
+  position: relative;
+  min-width: 150px;
+  color: #FFFFFF;
+  background-color: #066FAC; /* lake blue */
+  font-size: 16px;
+  font-weight: bold;
+  padding: 16px 5px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  outline:none;
+  border: 1px solid #066FAC; /* lake blue */
+  border-radius: 5px;
+  text-align: center;
+  margin: 5px;
+}
+
+.common-content {
+  display: flex;
+  justify-content: center;
+  margin: 5px;
+}
+
+.activeSessionCounterData table {
+  /* border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed; */
+  border: none;
+  text-align: center;
+}
+  
+.activeSessionCounterData th, td {
+  padding: 0px 16px;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+.activeSessionCounterData tr {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+.activeSessionCounterData tr:nth-child(odd) {
+  background-color: transparent;
+}
+
+.activeSessionCounterData tr:nth-child(even) {
+  background-color: transparent;
+}
+
+.activeSessionCounterData tr:hover {
+  background-color: #D5EBFD; /* Sky */
+  background-color: transparent;  
+}

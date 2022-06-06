@@ -1,0 +1,12 @@
+[Unit]
+Description=web-server
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/opt/web-server/web-server
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Test UI</title>
+<link rel='icon' href='/favicon.ico' type='image/x-icon'>
+
+<link rel="stylesheet" type="text/css" href="/css_style.css">
+<style></style>
+
+<script type="text/javascript" src="/global_web_configuration.js"></script>
+<script type="text/javascript" src="/main_function.js"></script>
+<script type="text/javascript" src="/http_handlers.js"></script>
+<script type="text/javascript" src="/data_handlers.js"></script>
+<script type="text/javascript" src="/html_element_interface.js"></script>
+
+<script type="text/javascript">
+</script>
+
+</head>
+<body onload="main();">
+
+    <div class="common-content">
+        <button class="common-button" onclick="pushUrlElementkToListUrl()">Increase rate</button>
+        <button class="common-button" onclick="popUrlElementFromListUrl()">Decrease rate</button>
+
+        <button class="common-button" onclick="checkIfActiveTestAlreadyRunningAndRunTest()">Test server with parallel requests</button>
+        <button class="common-button" onclick="stopTestCheckServerInfo()">Stop test server</button>
+        <button class="common-button" onclick="resetActiveSessionCounterData()">Reset active session counters data</button>
+    </div>
+    
+    <br><br>
+    <div>
+        <div class="common-content" id="fieldForUpdateDateUtcString">Data updated at: none</div><br>
+        <div class="common-content" id="fieldForRequestRate"></div><br>
+        <div class="common-content" id="fieldForActiveSessionCounterData"></div><br>
+    </div>
+
+    <div class="common-content">
+        <div class="activeSessionCounterData">
+            <table>
+                <tr>
+                    <td style="border: 1px solid; width: 400px;">Timestamp, UTC</td>
+                    <td style="border: 1px solid; width: 200px;">Client address</td>
+                    <td style="border: 1px solid; width: 125px;">App version</td>
+                    <td style="border: 1px solid; width: 400px;">Server hostname</td>
+                    <td style="border: 1px solid; width: 120px;">Server color</td>                    
+                </tr>
+            <table>
+            <table id="fieldForCheckServerInfo">
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>
