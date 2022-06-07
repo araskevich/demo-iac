@@ -12,7 +12,7 @@ image:
 
 # imagePullSecrets: []
 imagePullSecrets:
-  - regcred  
+  - name: regcred
 nameOverride: ""
 fullnameOverride: ""
 
