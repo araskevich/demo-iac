@@ -1,5 +1,4 @@
 ## Test project for IAC demo
------
 
 #### Technology overview:
 - Github (Source Code Management)
