@@ -5,7 +5,7 @@
 replicaCount: 2
 
 image:
-  repository: myregistrydomain.com:5000/devops/web-app
+  repository: docker-registry.localdomain:80/devops/web-app
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: v0.1
