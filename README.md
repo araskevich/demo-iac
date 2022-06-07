@@ -26,7 +26,7 @@
 1. Congifure external/internal DNS for Kubernetes Ingress (via /etc/hosts)
 1. Build k8s-utilities-image container(Docker/Kaniko) 
 1. Setup CI/CD Pipeline in Jenkins via Jenkinsfile and Github
-1. Deploy application (Jenkins/Helm/Kubectl)
+1. Deploy application via Jenkins Pipeline (Jenkins/Helm/Kubectl)
 
 #### Virtual machine configuration:
 |                       |  CPU  | RAM | Disk |
