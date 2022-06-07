@@ -41,7 +41,7 @@ podTemplate(yaml: '''
     container('kaniko') {
       stage('Building and publish image via Kaniko') {
             
-        dir(path: './blue-green-app/src/web-app/') {
+        dir(path: './blue-green-app/src/api-server/') {
           sh '''
             /kaniko/executor --dockerfile `pwd`/Dockerfile \
                               --insecure \
@@ -60,7 +60,7 @@ podTemplate(yaml: '''
           withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
               sh '''
                 pwd && ls -l && \
-                helm upgrade --install api-server ./api-server/ --set image.tag=$BUILD_NUMBER -n default --kubeconfig=$KUBECONFIG && \
+                helm upgrade --install api-server ./api-server/  --set image.tag=$BUILD_NUMBER -n default --kubeconfig=$KUBECONFIG && \
                 sleep 10 && \
                 kubectl get all -n default -l app.kubernetes.io/name=api-server --kubeconfig=$KUBECONFIG
               '''
