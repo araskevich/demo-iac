@@ -25,8 +25,8 @@ spec:
           image: api-server:v0.1
           imagePullPolicy: Never
           env:
-          - name: APPCOLOR
-            value: "green"
+            - name: APPCOLOR
+              value: "green"
           #ports:
           #  - containerPort: 5000
           #    protocol: TCP

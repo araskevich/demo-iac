@@ -24,6 +24,16 @@
   margin: 5px;
 }
 
+.common-button:hover {
+  background-color: #D5EBFD; /* Sky */
+  color: black;
+}
+
+.common-button:active {
+  background-color: sandybrown; /* Sky */
+  color: #FFFFFF;
+}
+
 .common-content {
   display: flex;
   justify-content: center;
@@ -53,7 +63,7 @@
   user-select: text;
 }
 
-.activeSessionCounterData tr:nth-child(odd) {
+/* .activeSessionCounterData tr:nth-child(odd) {
   background-color: transparent;
 }
 
@@ -62,6 +72,5 @@
 }
 
 .activeSessionCounterData tr:hover {
-  background-color: #D5EBFD; /* Sky */
   background-color: transparent;  
-}
+} */

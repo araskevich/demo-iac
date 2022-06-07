@@ -9,6 +9,6 @@ WORKDIR /usr/local/bin
 # apk add gcompat to run binary
 RUN apk add libc6-compat
 
-COPY ./helm .
-COPY ./kubectl .
+COPY /usr/local/bin/helm .
+COPY /usr/local/bin/kubectl .
 CMD ["pwd"]
