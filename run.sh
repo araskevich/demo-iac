@@ -5,7 +5,7 @@
 function stage_1:deploy-vm {
   # ls -l ~/.terraform.d/plugins/registry.terraform.io/dmacvicar/libvirt/0.6.14/linux_amd64/terraform-provider-libvirt_v0.6.14
   # ls -l ~/.terraform.d/plugins/registry.terraform.io/hashicorp/template/2.2.0/linux_amd64/terraform-provider-template_v2.2.0
-  cd terraform/
+  cd terraform/dev-test/
   sudo terraform init
   # sudo terraform plan
   sudo terraform apply
@@ -26,8 +26,15 @@ function stage_3:deploy-app {
 }
 
 function stage_4:destroy-vm {
-  cd terraform/
+  cd terraform/dev-test/
   sudo terraform destroy
+  cd -
+}
+
+function stage_extra:destroy-single-vm {
+  cd terraform/dev-test/
+  sudo terraform state list
+  sudo terraform destroy -target module.k8s-node01
   cd -
 }
 
