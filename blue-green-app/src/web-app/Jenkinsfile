@@ -1,0 +1,75 @@
+podTemplate(yaml: '''
+    apiVersion: v1
+    kind: Pod
+    spec:
+      containers:
+      - name: k8s-utilities
+        image: docker-registry.localdomain:80/devops/k8s-utilities:v0.1
+        command:
+        - sleep
+        args:
+        - 9999999      
+      - name: kaniko
+        image: gcr.io/kaniko-project/executor:debug
+        command:
+        - sleep
+        args:
+        - 9999999
+        volumeMounts:
+        - name: kaniko-secret
+          mountPath: /kaniko/.docker
+      restartPolicy: Never
+      volumes:
+      - name: kaniko-secret
+        secret:
+            secretName: regcred
+            items:
+            - key: .dockerconfigjson
+              path: config.json
+''') 
+
+{
+  node(POD_LABEL) {
+
+    stage('Get a Git project') {
+        
+      // git branch: 'main', url: 'https://github.com/araskevich/demo-iac.git'
+      git branch: 'dev', url: 'https://github.com/araskevich/demo-iac.git'    
+
+    }  
+    
+    container('kaniko') {
+      stage('Building and publish image via Kaniko') {
+            
+        dir(path: './blue-green-app/src/web-app/') {
+          sh '''
+            /kaniko/executor --dockerfile `pwd`/Dockerfile \
+                              --insecure \
+                              --context `pwd` \
+                              --destination docker-registry.localdomain:80/devops/web-app:$BUILD_NUMBER 
+          '''
+        }
+
+      }
+    }
+
+    container('k8s-utilities') {
+      stage('Deploy image via k8s-utilities') {
+            
+        dir(path: './blue-green-app/deploy/helm-charts') {
+          withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+              sh '''
+                pwd && ls -l && \
+                helm upgrade --install web-app ./web-app/ --set image.tag=$BUILD_NUMBER -n default --kubeconfig=$KUBECONFIG && \
+                sleep 10 && \
+                kubectl get all -n default -l app.kubernetes.io/name=web-app --kubeconfig=$KUBECONFIG
+              '''
+          }
+        }
+
+      }
+    }
+
+
+  }
+}
