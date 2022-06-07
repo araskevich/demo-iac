@@ -65,7 +65,7 @@ func main() {
 	http.HandleFunc("/dropHealthcheck", func(w http.ResponseWriter, r *http.Request) {
 		dropHealthcheck.dropHealthcheckProbe = "yes"
 		log.Printf("dropHealthcheck: %s, Connected from RemoteAddr: %s", dropHealthcheck.dropHealthcheckProbe, r.RemoteAddr)
-		fmt.Fprintf(w, "v0.1 - Hello from %s", name)
+		fmt.Fprintf(w, "v0.1 - dropHealthcheck from %s", name)
 	})
 
 	http.HandleFunc("/whatColor", func(w http.ResponseWriter, r *http.Request) {
