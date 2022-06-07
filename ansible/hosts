@@ -6,7 +6,7 @@ k8s-master01 ansible_host=192.168.122.11
 k8s_role=master
 
 [K8S_NODES]
-# k8s-node01 ansible_host=192.168.122.22
+k8s-node01 ansible_host=192.168.122.22
 
 [K8S_NODES:vars]
 k8s_role=node

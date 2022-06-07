@@ -15,9 +15,9 @@ function stage_1:deploy-vm {
 
 function stage_2:configure-vm {
   cd ansible/
-  sudo su devops
+  # sudo su devops
   ansible-playbook site.yml
-  exit
+  # exit
   cd -
 }
 
@@ -32,6 +32,10 @@ function stage_4:destroy-vm {
 }
 
 function stage_extra:destroy-single-vm {
+  kubectl cordon k8s-node01.localdomain
+  kubectl drain k8s-node01.localdomain --ignore-daemonsets
+  kubectl delete node k8s-node01.localdomain
+
   cd terraform/dev-test/
   sudo terraform state list
   sudo terraform destroy -target module.k8s-node01
@@ -42,15 +46,26 @@ function stage_extra:destroy-single-vm {
 
 #################  deploy_k8s  ######################
 function deploy_k8s_1:k8s-ingress-controller-nginx {
+  # curl -sL https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.2.0/deploy/static/provider/cloud/deploy.yaml > ingress-controller-nginx.yaml
+  # sudo kubectl apply -f ingress-controller-nginx.yaml
+  # NOTE: added LoadBalancer externalIPs 192.168.122.11
+
   kubectl apply -f k8s-ingress-monitoring/ingress-controller-nginx.yaml
   # kubectl patch svc ingress-nginx-controller -n ingress-nginx -p '{"spec": {"type": "LoadBalancer", "externalIPs":["192.168.122.11"]}}'
 }
 
 function deploy_k8s_2:k8s-metrics-server {
+  # curl -sL https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.6.1/components.yaml > metrics-server.yaml
+  # sudo kubectl apply -f metrics-server.yaml
+  # NOTE: added containers args: --kubelet-insecure-tls
+
   kubectl apply -f k8s-ingress-monitoring/metrics-server.yaml
 }
 
 function deploy_k8s_3:k8s-dashboard {
+  # curl -sL https://raw.githubusercontent.com/kubernetes/dashboard/v2.5.0/aio/deploy/recommended.yaml > k8s-dashboard.yaml
+  # sudo kubectl apply -f k8s-dashboard.yaml
+
   kubectl apply -f k8s-ingress-monitoring/k8s-dashboard.yaml -f k8s-ingress-monitoring/kubedash-ingress.yaml
 }
 
@@ -139,7 +154,12 @@ function create_dns:local {
 function k8s-utilities-image {
   ls -l ./utilities/k8s-utilities-image/Dockerfile
   cd ./utilities/k8s-utilities-image/
+  sudo docker login docker-registry.localdomain:80
   sudo docker build . -t k8s-utilities:v0.1
+  sudo docker tag k8s-utilities:v0.1 docker-registry.localdomain:80/devops/k8s-utilities:v0.1
+  sudo docker push docker-registry.localdomain:80/devops/k8s-utilities:v0.1
+  sudo docker logout docker-registry.localdomain:80
+  curl -u "testuser:testpassword"  docker-registry.localdomain:80/v2/_catalog
   cd -
   echo example of Jenkinsfile with kaniko and k8s-jenkins-jnlp-agent-docker-image podTemplate
   ls -l ./utilities/k8s-utilities-image/Jenkinsfile
@@ -200,9 +220,9 @@ function dependency {
     HELM_VERSION=$(helm version | head -n 1 | grep Version | cut -d '"' -f 2)
 
     if [ "$HELM_VERSION" != "" ]; then
-        printf "[INFO] HELM is installed, version: %s\n" "$HELM_VERSION"
+        printf "[INFO] Helm is installed, version: %s\n" "$HELM_VERSION"
     else
-        printf "[CRIT] HELM is not installed\n"
+        printf "[CRIT] Helm is not installed\n"
     fi
 
     ANSIBLE_VERSION=$(ansible --version | head -n 1 | grep ansible | tr -d "\[\|\]" | cut -d " " -f 2,3)

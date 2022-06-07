@@ -2,6 +2,8 @@ podTemplate(yaml: '''
     apiVersion: v1
     kind: Pod
     spec:
+      imagePullSecrets:
+      - name: regcred
       containers:
       - name: k8s-utilities
         image: docker-registry.localdomain:80/devops/k8s-utilities:v0.1
