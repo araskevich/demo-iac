@@ -35,8 +35,8 @@ podTemplate(yaml: '''
 
     stage('Get a Git project') {
         
-      // git branch: 'main', url: 'https://github.com/araskevich/demo-iac.git'
-      git branch: 'dev', url: 'https://github.com/araskevich/demo-iac.git'    
+      git branch: 'main', url: 'https://github.com/araskevich/demo-iac.git'
+      // git branch: 'dev', url: 'https://github.com/araskevich/demo-iac.git'    
 
     }  
     
