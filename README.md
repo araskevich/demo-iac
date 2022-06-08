@@ -16,8 +16,8 @@
 - HTML/CSS/Javascript Web UI Kits
 
 #### Project stages:
-1. Deploy virtual mathines (Terraform)
-1. Configure virtual mathines (Ansible)
+1. Deploy virtual machines (Terraform)
+1. Configure virtual machines (Ansible)
 1. Deploy and set up Kubernetes ingress controller Nginx
 1. Deploy and set up Kubernetes metrics server
 1. Deploy and set up Kubernetes dashboard
