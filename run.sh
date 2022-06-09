@@ -185,6 +185,14 @@ function k8s-utilities-image {
   ls -l ./utilities/k8s-utilities-image/Jenkinsfile
 }
 
+function helm-deploy-api-server {
+  cd ./blue-green-app/deploy/helm-charts/
+  helm upgrade --install api-server ./api-server/ --set image.tag=19 --set appColor="green" --set replicaCount=10
+  sleep 600
+  helm upgrade --install api-server ./api-server/ --set image.tag=19 --set appColor="blue" --set replicaCount=10
+  cd -
+}
+
 #####################################################
 
 #################  deploy_k8s_app  ##################

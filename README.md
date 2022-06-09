@@ -45,7 +45,15 @@
 - 192.168.122.11 grafana.localdomain
 - 192.168.122.11 prometheus.localdomain
 - 192.168.122.11 alertmanager.localdomain
+
 #### Some useful commands described in code:
 ```
 ./run.sh help
 ```
+
+#### Helm update api-server results:
+```
+./run.sh helm-deploy-api-server
+```
+![](web-app_api-server-helm-deploy.png)
+![](grafana_api-server-helm-deploy.png)
