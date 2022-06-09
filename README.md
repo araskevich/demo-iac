@@ -10,6 +10,7 @@
 - Terraform (Infrastructure as code software tool)
 - Helm, Kubectl (kubernetes configuration management tools)
 - Libvirt, Qemu-KVM (Virtualization Technology)
+- Prometheus, Grafana (Monitoring systems)
 
 #### Test application code:
 - Golang application
