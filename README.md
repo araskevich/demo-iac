@@ -27,6 +27,7 @@
 1. Build k8s-utilities-image container(Docker/Kaniko) 
 1. Setup CI/CD Pipeline in Jenkins via Jenkinsfile and Github
 1. Deploy application via Jenkins Pipeline (Jenkins/Helm/Kubectl)
+1. Deploy kube-prometheus-stack via Helm and setup Grafana monitoring dashboard
 
 #### Virtual machine configuration:
 |                       |  CPU  | RAM | Disk |
@@ -41,7 +42,9 @@
 - 192.168.122.11 docker-registry.localdomain
 - 192.168.122.11 web-app.localdomain
 - 192.168.122.11 api-server.localdomain
-
+- 192.168.122.11 grafana.localdomain
+- 192.168.122.11 prometheus.localdomain
+- 192.168.122.11 alertmanager.localdomain
 #### Some useful commands described in code:
 ```
 ./run.sh help

@@ -142,6 +142,23 @@ function deploy_k8s_5:k8s-jenkins-docker-regcred {
     --docker-email=devops@localdomain.com
 }
 
+function deploy_k8s_6:kube-prometheus-stack {
+  kubectl create namespace prometheus-monitoring
+
+  helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+  helm install prometheus-monitoring prometheus-community/kube-prometheus-stack -n prometheus-monitoring
+
+  kubectl apply -f prometheus-monitoring/prometheus-stack-ingress.yaml
+  kubectl apply -f prometheus-monitoring/api-server-metrics-servicemonitor.yaml
+
+  # grafana.localdomain
+  # Username: admin
+  # Password: prom-operator
+  #
+  # custom api-server dashboard 
+  # ls -l prometheus-monitoring/grafana-dashboard.json
+}
+
 function create_dns:local {   
    echo "# update /etc/hosts"
    echo 192.168.122.11 kubedash.localdomain
@@ -149,6 +166,9 @@ function create_dns:local {
    echo 192.168.122.11 docker-registry.localdomain
    echo 192.168.122.11 web-app.localdomain
    echo 192.168.122.11 api-server.localdomain
+   echo 192.168.122.11 grafana.localdomain
+   echo 192.168.122.11 prometheus.localdomain
+   echo 192.168.122.11 alertmanager.localdomain   
 }
 
 function k8s-utilities-image {
