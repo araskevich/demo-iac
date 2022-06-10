@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: api-server-blue-green-metrics-servicemonitor
+  labels:
+    # app: api-server
+    app.kubernetes.io/name: api-server-blue-green
+    release: prometheus-monitoring
+  namespace: default
+spec:
+  # jobLabel: myCounter
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 60s
+  selector:
+    matchLabels:
+      # app: api-server
+      app.kubernetes.io/name: api-server-blue-green
+      # release: prometheus-monitoring
+  namespaceSelector:
+    matchNames:
+      - default

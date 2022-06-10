@@ -193,6 +193,59 @@ function helm-deploy-api-server {
   cd -
 }
 
+function helm-deploy-api-server-blue-green_1:blueToGreen {
+  cd ./blue-green-app/deploy/helm-charts/
+  echo "[INFO] Enabling BLUE environment, GREEN disabled"
+  helm upgrade --install api-server-blue-green ./api-server-blue-green/ --set image.tag=19 \
+    --set blueApiServer.enabled=true --set greenApiServer.enabled=false \
+    --set serviceSwitcher=api-server-blue
+  sleep 300
+  echo "[INFO] Enabling GREEN, traffic on BLUE environment"
+  helm upgrade api-server-blue-green ./api-server-blue-green/ --reuse-values \
+    --set autoscaling.minReplicas=10 --set greenApiServer.enabled=true
+  sleep 300
+  echo "[INFO] Switching service from BLUE to GREEN environment"
+  helm upgrade api-server-blue-green ./api-server-blue-green/ --reuse-values \
+    --set serviceSwitcher=api-server-green
+  sleep 300
+  echo "[INFO] Disabling BLUE environment, traffic on GREEN environment"
+  helm upgrade api-server-blue-green ./api-server-blue-green/ --reuse-values \
+    --set blueApiServer.enabled=false --set autoscaling.minReplicas=2
+  cd -
+}
+
+function helm-deploy-api-server-blue-green_2:greenToBlue {
+  cd ./blue-green-app/deploy/helm-charts/
+  echo "[INFO] Enabling BLUE, traffic on  GREEN environment"
+  helm upgrade api-server-blue-green ./api-server-blue-green/ --reuse-values \
+    --set autoscaling.minReplicas=10 --set blueApiServer.enabled=true
+  sleep 60
+  echo "[INFO] Switching service from GREEN to BLUE environment"
+  helm upgrade api-server-blue-green ./api-server-blue-green/ --reuse-values \
+     --set serviceSwitcher=api-server-blue
+  sleep 60
+  echo "[INFO] Disabling GREEN environment, traffic on BLUE environment"
+  helm upgrade api-server-blue-green ./api-server-blue-green/ --reuse-values \
+    --set greenApiServer.enabled=false --set autoscaling.minReplicas=2
+  cd -
+}
+
+function helm-deploy-api-server-blue-green_3:blueToGreen {
+  cd ./blue-green-app/deploy/helm-charts/
+  echo "[INFO] Enabling GREEN, traffic on BLUE environment"
+  helm upgrade api-server-blue-green ./api-server-blue-green/ --reuse-values \
+    --set autoscaling.minReplicas=10 --set greenApiServer.enabled=true
+  sleep 60
+  echo "[INFO] Switching service from BLUE to GREEN environment"
+  helm upgrade api-server-blue-green ./api-server-blue-green/ --reuse-values \
+     --set serviceSwitcher=api-server-green
+  sleep 60
+  echo "[INFO] Disabling BLUE environment, traffic on GREEN environment"
+  helm upgrade api-server-blue-green ./api-server-blue-green/ --reuse-values \
+    --set blueApiServer.enabled=false --set autoscaling.minReplicas=2
+  cd -
+}
+
 #####################################################
 
 #################  deploy_k8s_app  ##################

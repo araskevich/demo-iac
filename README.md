@@ -52,9 +52,18 @@
 ./run.sh help
 ```
 
-#### Helm update api-server results:
+#### Helm update for api-server results:
 ```
 ./run.sh helm-deploy-api-server
 ```
 ![](web-app_api-server-helm-deploy.png)
 ![](grafana_api-server-helm-deploy.png)
+
+#### Helm blue-green update for api-server-blue-green results:
+```
+./run.sh helm-deploy-api-server-blue-green_1:blueToGreen
+./run.sh helm-deploy-api-server-blue-green_2:greenToBlue
+./run.sh helm-deploy-api-server-blue-green_3:blueToGreen
+```
+![](web-app_api-server-blue-green-helm-deploy.png)
+![](grafana_api-server-blue-green-helm-deploy.png)
