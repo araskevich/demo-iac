@@ -59,7 +59,7 @@
 ![](web-app_api-server-helm-deploy.png)
 ![](grafana_api-server-helm-deploy.png)
 
-#### Helm blue-green update for api-server-blue-green results:
+#### Helm blue-green update for api-server-blue-green results (zero downtime deployment):
 ```
 ./run.sh helm-deploy-api-server-blue-green_1:blueToGreen
 ./run.sh helm-deploy-api-server-blue-green_2:greenToBlue
