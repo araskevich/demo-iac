@@ -150,6 +150,7 @@ function deploy_k8s_6:kube-prometheus-stack {
 
   kubectl apply -f prometheus-monitoring/prometheus-stack-ingress.yaml
   kubectl apply -f prometheus-monitoring/api-server-metrics-servicemonitor.yaml
+  kubectl apply -f prometheus-monitoring/api-server-blue-green-metrics-servicemonitor.yaml
 
   # grafana.localdomain
   # Username: admin
@@ -157,6 +158,7 @@ function deploy_k8s_6:kube-prometheus-stack {
   #
   # custom api-server dashboard 
   # ls -l prometheus-monitoring/grafana-dashboard.json
+  # ls -l prometheus-monitoring/grafana-dashboard_v2_api-server-blue-green.json
 }
 
 function create_dns:local {   
@@ -179,7 +181,8 @@ function k8s-utilities-image {
   sudo docker tag k8s-utilities:v0.1 docker-registry.localdomain:80/devops/k8s-utilities:v0.1
   sudo docker push docker-registry.localdomain:80/devops/k8s-utilities:v0.1
   sudo docker logout docker-registry.localdomain:80
-  curl -u "testuser:testpassword"  docker-registry.localdomain:80/v2/_catalog
+  curl -u "testuser:testpassword" docker-registry.localdomain:80/v2/_catalog
+  curl -u "testuser:testpassword" docker-registry.localdomain:80/v2/_catalog/devops/k8s-utilities/tags/list
   cd -
   echo example of Jenkinsfile with kaniko and k8s-jenkins-jnlp-agent-docker-image podTemplate
   ls -l ./utilities/k8s-utilities-image/Jenkinsfile

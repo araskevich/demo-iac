@@ -1,0 +1,51 @@
+stages:
+  - Build
+  - Deploy
+
+# Variables section
+variables:
+  CONTAINER_REGISTRY: docker-registry.localdomain:80
+  IMAGE_NAME: devops/test-gitlab-ci
+  IMAGE_TAG: $CI_COMMIT_SHORT_SHA
+
+# Gitlab Anchor called &kaniko-build
+.kaniko-build: &kaniko-build
+  - |
+    /kaniko/executor --dockerfile $CI_PROJECT_DIR/Dockerfile \
+       --insecure \
+       --context $CI_PROJECT_DIR \
+       --destination $CONTAINER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+
+# Jobs
+Build:
+  stage: Build
+  tags: [devops]
+  image: 
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  before_script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"${CONTAINER_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${DOCKER_USER}" "${DOCKER_PASS}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json     
+  script:
+    - *kaniko-build
+  only:
+    - dev
+
+# Jobs
+Deploy:
+  stage: Deploy
+  tags: [devops]
+  image: 
+    name: $CONTAINER_REGISTRY/devops/k8s-utilities:v0.1
+    entrypoint: [""]
+  before_script:
+    - pwd && ls -l
+  script:
+    - helm upgrade --install test-nginx ./test-nginx/ --set image.tag=$IMAGE_TAG
+    - sleep 10
+    - helm list --kubeconfig=$KUBECONFIG
+    - sleep 10
+    - kubectl get all --kubeconfig=$KUBECONFIG
+
+  only:
+    - dev    

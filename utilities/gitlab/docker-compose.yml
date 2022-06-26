@@ -1,0 +1,82 @@
+# 1. sudo useradd -m gitops -s /bin/bash && sudo usermod -G sudo gitops && sudo passwd gitops
+# 2. sudo su gitops && ssh-keygen -t rsa -b 4096 -C "gitops@example.com"
+# 3. docker-compose gitlab, gitlab runner (docker-compose up -d)
+# 4. install git client localy
+#    git config --global user.name "Git Ops"
+#    git config --global user.email "gitops@example.com"
+# 5. init git repo via gitlab  and add public ssh key to gitlab
+# 6. cat /etc/hosts added 192.168.1.120 mygitlab.example.com
+# 7.  gitops@localhost:~$ sudo cat  ~/.ssh/config
+#     Host mygitlab.example.com
+#     Port 5022
+#     Host *
+#     Port 22
+# 8. git clone git@mygitlab.example.com:root/myproject.git
+# 9. http://192.168.1.120:8080/admin/runners
+# 10. Register runner
+# 11. Create .gitlab-ci.yml file with CI/CD Pipeline
+
+# docker exec -it gitlab-runner gitlab-runner register --url "http://gitlab-ce" --clone-url "http://gitlab-ce"
+
+# sudo docker run -d --name gitlab-runner --restart always \
+#   -v /opt/gitlab-runner/config:/etc/gitlab-runner \
+#   -v /var/run/docker.sock:/var/run/docker.sock \
+#   gitlab/gitlab-runner:latest
+
+# sudo docker exec -it gitlab-runner gitlab-runner register --url "http://192.168.1.120:8080" --clone-url "http://192.168.1.120:8080"
+
+# # echo -n "testuser:testpassword" | base64
+# dGVzdHVzZXI6dGVzdHBhc3N3b3Jk
+# Create a CI/CD variable DOCKER_AUTH_CONFIG with the content of the Docker configuration file as the value:
+# Preparing the "docker" executor
+
+# {
+#     "auths": {
+#         "docker-registry.localdomain:80": {
+#             "auth": "dGVzdHVzZXI6dGVzdHBhc3N3b3Jk"
+#         }
+#     }
+# }
+
+# or configure runner
+# [[runners]]
+# environment = ["DOCKER_AUTH_CONFIG={\"auths\":{\"registry.example.com:5000\":{\"auth\":\"bXlfdXNlcm5hbWU6bXlfcGFzc3dvcmQ=\"}}}"]
+
+# export GITLAB_HOME=/opt/docker-compose/gitlab
+# docker-compose up -d
+
+# docker-compose.yml
+version: '3.8'
+services:
+  web:
+    image: 'gitlab/gitlab-ce:latest'
+    restart: always
+    hostname: 'localhost'
+    container_name: gitlab-ce
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://localhost'
+    ports:
+      - '5022:22'
+      - '8080:80'
+      - '8443:443'
+    volumes:
+      - '$GITLAB_HOME/config:/etc/gitlab'
+      - '$GITLAB_HOME/logs:/var/log/gitlab'
+      - '$GITLAB_HOME/data:/var/opt/gitlab'
+    networks:
+      - gitlab
+  gitlab-runner:
+    image: gitlab/gitlab-runner:alpine
+    container_name: gitlab-runner    
+    restart: always
+    depends_on:
+      - web
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - '$GITLAB_HOME/gitlab-runner:/etc/gitlab-runner'
+    networks:
+      - gitlab
+networks:
+  gitlab:
+    name: gitlab-network
