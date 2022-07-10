@@ -46,6 +46,5 @@ Deploy:
     - helm list --kubeconfig=$KUBECONFIG
     - sleep 10
     - kubectl get all --kubeconfig=$KUBECONFIG
-
   only:
     - dev    

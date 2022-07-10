@@ -1,0 +1,21 @@
+kind: VirtualService
+apiVersion: networking.istio.io/v1beta1
+metadata:
+  namespace: default
+  name: api-server-blue-green
+  labels:
+    kiali_wizard: request_routing
+spec:
+  http:
+    - route:
+        - destination:
+            host: api-server-blue-green.default.svc.cluster.local
+            subset: blue-v1
+          weight: {{ .Values.blueApiServer.weight }}
+        - destination:
+            host: api-server-blue-green.default.svc.cluster.local
+            subset: green-v1
+          weight: {{ .Values.greenApiServer.weight }}
+  hosts:
+    - api-server-blue-green.default.svc.cluster.local
+  gateways: ~

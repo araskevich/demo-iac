@@ -45,6 +45,13 @@
 # export GITLAB_HOME=/opt/docker-compose/gitlab
 # docker-compose up -d
 
+# [[runners]]
+#   ...
+#   [runners.docker]
+#     ...
+#     network_mode = "gitlab-network"
+
+
 # docker-compose.yml
 version: '3.8'
 services:

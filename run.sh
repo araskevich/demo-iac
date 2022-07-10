@@ -251,6 +251,61 @@ function helm-deploy-api-server-blue-green_3:blueToGreen {
 
 #####################################################
 
+##############  canary_deployment_k8s_app  ##########
+
+function canary_deployment_k8s_app:installIstio {
+  # https://istio.io/latest/docs/setup/getting-started/
+
+  # Download Istio
+  cd ~/Downloads/
+  curl -L https://istio.io/downloadIstio | sh -
+  cd istio*
+  sudo cp bin/istioctl /usr/local/bin/
+
+  # Install Istio
+  istioctl install --set profile=demo -y
+  kubectl label namespace default istio-injection=enabled
+  
+  # Install Kiali dashboard, along with Prometheus, Grafana, and Jaeger.
+  kubectl apply -f samples/addons
+  kubectl rollout status deployment/kiali -n istio-system
+
+  kubectl get -n istio-system all
+
+  # istioctl dashboard kiali
+  # istioctl dashboard jaeger
+  # istioctl dashboard grafana
+  # istioctl dashboard prometheus
+  
+  # kubectl -n istio-system port-forward service/istio-ingressgateway 8080:80
+
+  # kubectl -n ingress-nginx get service ingress-nginx-controller
+  # kubectl -n istio-system get service/istio-ingressgateway
+
+  # kubectl patch svc ingress-nginx-controller -n ingress-nginx -p '{"spec": {"type": "LoadBalancer", "externalIPs":[]}}'
+  # kubectl patch svc istio-ingressgateway -n istio-system -p '{"spec": {"type": "LoadBalancer", "externalIPs":["192.168.122.11"]}}'
+
+  # for i in {1..10000000}; do curl -sL http://myweb.example.com/ > /dev/null ; sleep 1; done
+  # sudo echo 192.168.122.11 myweb.example.com > /etc/hosts
+
+}
+
+function canary_deployment_k8s_app:istioTestPart1 {
+  cd ./k8s-istio-service-mesh/helm-charts/
+  helm upgrade --install api-server-blue-green ./api-server-blue-green/ \
+      --set greenApiServer.weight=10 --set blueApiServer.weight=90
+  cd -
+}
+
+function canary_deployment_k8s_app:istioTestPart2 {
+  cd ./k8s-istio-service-mesh/helm-charts/
+  helm upgrade --install api-server-blue-green ./api-server-blue-green/ \
+      --set greenApiServer.weight=50 --set blueApiServer.weight=50
+  cd -
+}
+
+#####################################################
+
 #################  deploy_k8s_app  ##################
 
 function deploy_k8s_app_1:api-server {

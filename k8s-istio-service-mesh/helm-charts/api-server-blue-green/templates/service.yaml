@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "api-server-blue-green.fullname" . }}
+  labels:
+    app: api-server-blue-green
+    {{- include "api-server-blue-green.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: api-server-blue-green
+    {{- include "api-server-blue-green.selectorLabels" . | nindent 4 }}

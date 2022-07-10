@@ -1,0 +1,75 @@
+---
+###################################################
+# ConfigMap for default nginx configuration
+###################################################
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  default.conf: |
+    server {
+      listen 80;
+      location / {
+        proxy_pass http://api-server-blue-green:4000;
+        proxy_http_version 1.1;
+      }
+    }
+---
+###################################################
+# Service: myweb
+###################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: myweb
+  labels:
+    app: myweb
+spec:
+  ports:
+  - name: http
+    port: 80
+  selector:
+    app: myweb
+---
+###################################################
+# Deployment: myweb
+###################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myweb
+  labels:
+    app: myweb
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myweb
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: myweb
+        version: v1
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/conf.d/
+        # ports:
+        # - containerPort: 80
+        ports:
+          - name: http
+            containerPort: 80
+            protocol: TCP         
+          - name: http-1-1
+            containerPort: 4000
+            protocol: TCP        
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: nginx-config

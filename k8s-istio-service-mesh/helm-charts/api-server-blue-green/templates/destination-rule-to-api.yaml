@@ -1,0 +1,18 @@
+kind: DestinationRule
+apiVersion: networking.istio.io/v1beta1
+metadata:
+  namespace: default
+  name: api-server-blue-green
+  labels:
+    kiali_wizard: request_routing
+  annotations: ~
+spec:
+  host: api-server-blue-green.default.svc.cluster.local
+  subsets:
+    - name: blue-v1
+      labels:
+        version: blue-v1
+    - name: green-v1
+      labels:
+        version: green-v1
+  trafficPolicy: ~

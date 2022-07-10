@@ -29,6 +29,7 @@
 1. Setup CI/CD Pipeline in Jenkins via Jenkinsfile and Github
 1. Deploy application via Jenkins Pipeline (Jenkins/Helm/Kubectl)
 1. Deploy kube-prometheus-stack via Helm and setup Grafana monitoring dashboard
+1. Replace ingress controller Nginx by Istio gateway and perform canary deployment
 
 #### Virtual machine configuration:
 |                       |  CPU  | RAM | Disk |
@@ -67,3 +68,14 @@
 ```
 ![](web-app_api-server-blue-green-helm-deploy.png)
 ![](grafana_api-server-blue-green-helm-deploy.png)
+
+#### Helm blue-green canary deployment with Istio service mesh (Kiali Graph) results:
+```
+./run.sh canary_deployment_k8s_app:istioTestPart1
+```
+![](web-app_api-server-blue-green-helm-canary-deploy-90-10.png)
+
+```
+./run.sh canary_deployment_k8s_app:istioTestPart2
+```
+![](web-app_api-server-blue-green-helm-canary-deploy-50-50.png)
